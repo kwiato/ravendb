@@ -169,7 +169,8 @@ namespace Raven.Server.Documents.Indexes.MapReduce.Static
                     var accessor = _parent._propertyAccessor ?? (_parent._propertyAccessor = PropertyAccessor.Create(document.GetType()));
 
                     var mapResult = new DynamicJsonValue();
-                    var reduceKey = new DynamicJsonValue();
+                    ulong reduceHashKey = 0;
+                    var hash64Context = Hashing.Streamed.XXHash64.BeginProcess();
 
                     foreach (var property in accessor.Properties)
                     {
@@ -178,20 +179,56 @@ namespace Raven.Server.Documents.Indexes.MapReduce.Static
                         mapResult[property.Key] = value;
 
                         if (_parent._index.Definition.GroupByFields.Contains(property.Key))
-                            reduceKey[property.Key] = value;
+                        {
+                            AddValueToHash(value, hash64Context);
+                        }
                     }
 
-                    ulong reduceHashKey;
-                    using (var reduceKeyObject = _parent._indexContext.ReadObject(reduceKey, "reduce-key"))
-                    {
-                        reduceHashKey = Hashing.XXHash64.Calculate(reduceKeyObject.BasePointer, reduceKeyObject.Size);
-                    }
+                    reduceHashKey = Hashing.Streamed.XXHash64.EndProcess(hash64Context);
 
                     Current.Data = _parent._indexContext.ReadObject(mapResult, "map-result");
                     Current.ReduceKeyHash = reduceHashKey;
                     Current.State = _parent._index.GetReduceKeyState(reduceHashKey, _parent._indexContext, create: true);
 
                     return true;
+                }
+
+                private static unsafe void AddValueToHash(object value, Hashing.Streamed.XXHash64Context hash64Context)
+                {
+                    var lsv = value as LazyStringValue;
+                    if (lsv != null)
+                    {
+                        Hashing.Streamed.XXHash64.Process(hash64Context, lsv.Buffer, lsv.Size);
+                        return;
+                    }
+                    var s = value as string;
+                    if (s != null)
+                    {
+                        fixed (char* p = s)
+                        {
+                            Hashing.Streamed.XXHash64.Process(hash64Context, (byte*)p,
+                                s.Length*sizeof(char));
+                        }
+                        return;
+                    }
+                    var lcsv = value as LazyCompressedStringValue;
+                    if (lcsv != null)
+                    {
+                        Hashing.Streamed.XXHash64.Process(hash64Context, lcsv.Buffer, lcsv.CompressedSize);
+                        return;
+                    }
+                    if (value is long)
+                    {
+                        var l = (long)value;
+                        Hashing.Streamed.XXHash64.Process(hash64Context, (byte*)&l, sizeof(long));
+                        return;
+                    }
+                    if (value is decimal)
+                    {
+                        var l = (decimal)value;
+                        Hashing.Streamed.XXHash64.Process(hash64Context, (byte*)&l, sizeof(decimal));
+                        return;
+                    }
                 }
 
                 public void Reset()

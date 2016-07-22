@@ -23,7 +23,22 @@ namespace Indexing.Benchmark
                 Url = url,
                 DefaultDatabase = "map-reduce-benchmark"
             }.Initialize(ensureDatabaseExists: true);
-
+            try
+            {
+                _store.DatabaseCommands.GlobalAdmin.DeleteDatabase("map-reduce-benchmark", true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            _store.DatabaseCommands.GlobalAdmin.CreateDatabase(new Raven.Abstractions.Data.DatabaseDocument
+            {
+                Id = "map-reduce-benchmark",
+                Settings = new Dictionary<string, string>
+                {
+                    {"Raven/DataDir", "~/map-reduce-benchmark" }
+                }
+            });
             _random = new Random(seed ?? Environment.TickCount);
         }
 
@@ -39,8 +54,8 @@ namespace Indexing.Benchmark
                 {
                     bulk.StoreAsync(new Order
                     {
-                        Company = $"companies/{_random.Next(0, numberOfDocuments / 100)}",
-                        Employee = $"employees/{_random.Next(0, numberOfDocuments / 100)}",
+                        Company = $"companies/{_random.Next(0, numberOfDocuments/100)}",
+                        Employee = $"employees/{_random.Next(0, numberOfDocuments/100)}",
                         Lines = CreateOrderLines(_random.Next(0, 100)),
                         Freight = _random.Next(),
                         OrderedAt = DateTime.Now,
@@ -68,7 +83,7 @@ namespace Indexing.Benchmark
             var ordersByCompany = new Orders_ByCompany();
 
             Console.WriteLine($"Inserting {ordersByCompany.IndexName} index");
-
+            Console.ReadLine();
             ordersByCompany.Execute(_store);
 
             Console.WriteLine("waiting for results ...");
@@ -137,17 +152,14 @@ namespace Indexing.Benchmark
 
         public override string IndexName
         {
-            get
-            {
-                return "Orders/ByCompany";
-            }
+            get { return "Orders/ByCompany"; }
         }
 
         public override IndexDefinition CreateIndexDefinition()
         {
             return new IndexDefinition
             {
-                Maps = { @"from order in docs.Orders
+                Maps = {@"from order in docs.Orders
                             from line in order.Lines
                             select
                             new
@@ -155,7 +167,7 @@ namespace Indexing.Benchmark
                                 order.Company,
                                 Count = 1,
                                 Total = line.PricePerUnit
-                            }" },
+                            }"},
                 Reduce = @"from result in results
 group result by result.Company into g
 select new
