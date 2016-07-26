@@ -321,7 +321,7 @@ namespace Raven.Server.Documents.Handlers
             {
                 var id = GetQueryStringValueAndAssertIfSingleAndNotEmpty("id");
 
-                var doc = await context.ReadForDiskAsync(RequestBodyStream(), id);
+                var doc = await context.ReadForMemoryAsync(RequestBodyStream(), id);
 
                 var etag = GetLongFromHeaders("If-Match");
 

@@ -477,14 +477,14 @@ namespace Sparrow
         {
             var local = GetThreadLocalQueue();
             local.Enqueue(memory);
-            while (local.Count > 64)
-            {
-                // TODO: better policy, maybe look at the last checkout time or something like that?
-                if (local.TryDequeue(out memory))
-                {
-                    memory.Dispose();
-                }
-            }
+            //while (local.Count > 64)
+            //{
+            //    // TODO: better policy, maybe look at the last checkout time or something like that?
+            //    if (local.TryDequeue(out memory))
+            //    {
+            //        memory.Dispose();
+            //    }
+            //}
         }
     }
 
