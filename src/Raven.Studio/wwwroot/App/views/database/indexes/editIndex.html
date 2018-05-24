@@ -10,14 +10,17 @@
                     </div>
                 </div>
             </div>
-            <div class="clearfix">
-                <div class="pull-left-sm">
+            <div class="flex-horizontal">
+                <div class="btn-group flex-grow">
                     <button class="btn btn-primary" data-bind="click: save, enable: isSaveEnabled(), css: { 'btn-spinner': saveInProgress }"><i class="icon-save"></i><span>Save</span></button>
                     <a data-bind="attr: { href: indexesUrl }, visible: !isEditingExistingIndex()" class="btn btn-default"><i class="icon-cancel"></i> <span>Cancel</span></a>
                     <button class="btn btn-default" data-bind="click: cloneIndex, visible: isEditingExistingIndex"><i class="icon-clone"></i><span>Clone</span></button>
-                    <button class="btn btn-danger" data-bind="visible: isEditingExistingIndex, click: deleteIndex"><i class="icon-trash"></i> <span>Delete</span></button>
+                    <!-- TODO: bind cancel action -->
+                    <button class="btn btn-default" data-bind="visible: isEditingExistingIndex, click: deleteIndex"><i class="icon-cancel"></i> <span>Cancel</span></button>
                 </div>
-                <div class="btn-group pull-right-sm">
+
+
+                <div class="btn-group">
                     <a data-bind="click: getCSharpCode, visible: isEditingExistingIndex" class="btn" title="Copy the index c# code"><i class="icon-code"></i> <span>Copy C#</span></a>
                     <a data-bind="attr: { href: queryUrl }, visible: isEditingExistingIndex" class="btn" title="Query the index"><i class="icon-query"></i> <span>Query</span></a>
                     <a data-bind="attr: { href: termsUrl }, visible: isEditingExistingIndex" class="btn" title="Navigate to index terms"><i class="icon-terms"></i> <span>Terms</span></a>
@@ -118,7 +121,7 @@
                 <li role="presentation">
                     <a href="#additionalSources" aria-controls="additionalSources" role="tab" data-toggle="tab">
                         <i class="icon-chash"></i>
-                        <span>Additional sources</span> 
+                        <span>Additional sources</span>
                         <span class="label label-primary margin-left margin-left-sm" data-bind="text: editedIndex().additionalSources().length || undefined"></span>
                     </a>
                 </li>
@@ -183,7 +186,7 @@
                             Upload additional source files which can be referenced inside the index definition <small class="info"><i class="icon-info text-info"></i></small>
                         </div>
                     </div>
-                   
+
                     <div class="flex-horizontal flex-stretch-items margin-top">
                         <ul class="item-list flex-noshrink" data-bind="foreach: editedIndex().additionalSources">
                             <li class="item" data-bind="css: { active: $data === $root.selectedSourcePreview() }">
@@ -215,12 +218,13 @@
                         <input class="form-control" data-bind="textInput: editedIndex().name" disabled>
                     </div>
                     <div>
-                        <button class="btn btn-danger" data-bind="visible: isEditingExistingIndex, click: deleteIndex"><i class="icon-trash"></i> <span>Delete</span></button>
+                        <!-- TODO: bind cancel action -->
+                        <button class="btn btn-default" data-bind="visible: isEditingExistingIndex, click: deleteIndex"><i class="icon-cancel"></i> <span>Delete</span></button>
                     </div>
                 </div>
                 <div class="col-lg-4 col-xl-6 flex-horizontal">
                     <div class="flex-separator"></div>
-                    <div class="btn-group btn-group-sm">
+                    <div class="btn-group">
                         <a data-bind="attr: { href: queryUrl }, visible: isEditingExistingIndex" class="btn" title="Query the index"><i class="icon-query"></i> <span>Query</span></a>
                         <a data-bind="attr: { href: termsUrl }, visible: isEditingExistingIndex" class="btn" title="Navigate to index terms"><i class="icon-terms"></i> <span>Terms</span></a>
                     </div>
@@ -313,27 +317,27 @@
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END AUTO INDEX ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 <script type="text/html" id="additional-source-template">
-<div class="padding padding-sm">
-<div>Example additional source:</div>    
+    <div class="padding padding-sm">
+        <div>Example additional source:</div>
 <pre class="margin-bottom">
 <span class="token keyword">namespace</span> My<span class="token punctuation">.</span>Namespace
 <span class="token punctuation">{</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">PeopleUtil</span>
-    <span class="token punctuation">{</span>
+        <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">PeopleUtil</span>
+        <span class="token punctuation">{</span>
         <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">string</span> <span class="token function">CalculatePersonEmail</span><span class="token punctuation">(</span><span class="token keyword">string</span> name<span class="token punctuation">)</span>
         <span class="token punctuation">{</span>
-            <span class="token keyword">return</span> $<span class="token string">"{name}@example.com"</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> $<span class="token string">"{name}@example.com"</span><span class="token punctuation">;</span>
         <span class="token punctuation">}</span>
-    <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </pre>
-    <div>Usage in map statement:</div>
+        <div>Usage in map statement:</div>
 <pre>
 docs<span class="token punctuation">.</span>People<span class="token punctuation">.</span><span class="token function">Select</span><span class="token punctuation">(</span>person <span class="token operator">=</span><span class="token operator">></span> <span class="token keyword">new</span> <span class="token punctuation">{</span>
     _ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">CreateField</span><span class="token punctuation">(</span><span class="token string">"Email"</span><span class="token punctuation">,</span> PeopleUtil<span class="token punctuation">.</span><span class="token function">CalculatePersonEmail</span><span class="token punctuation">(</span>person<span class="token punctuation">.</span>Name<span class="token punctuation">)</span><span class="token punctuation">,</span> stored<span class="token punctuation">:</span> <span class="token keyword">true</span><span class="token punctuation">,</span> analyzed<span class="token punctuation">:</span> <span class="token keyword">true</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span>    
 </pre>
-</div>
+    </div>
 </script>
 
 <script type="text/html" id="field-template">
