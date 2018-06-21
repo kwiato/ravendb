@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div class="flex-separator"></div>
-            <!-- TODO 
+            <!-- TODO
             <div class="toggle toggle-primary databasesToolbar-toggleCompactView pull-right">
                 <input id="compactViewInput" name="compactView" class="styled" type="checkbox" data-bind="checked: $root.compactView" />
                 <label for="compactViewInput">
@@ -124,12 +124,12 @@
                                               css: { 'link-disabled': isBeingDeleted }, visible: canNavigateToDatabase()" href="#">
                                     <i data-bind="attr: { class: $root.createIsLocalDatabaseObservable(name)() ? 'icon-database-home': 'icon-database' }"></i><span data-bind="text: name"></span>
                                 </a>
-                                
+
                             </h3>
                             <small class="margin-right margin-right-sm" title="This database is encrypted" data-bind="visible: isEncrypted"><i class="icon-encryption"></i></small>
                         </div>
-                        <div class="dbgroup-node-type flex-horizontal">
-                            <!-- ko foreach: nodes -->
+                        <div class="dbgroup-node-type">
+                            <!-- ko foreach: nodes --> <!-- TODO: limit shown nodes to 5  -->
                             <div>
                                 <a data-bind="attr: { href: $root.createAllDocumentsUrlObservableForNode($parent, $data), target: tag() === $root.clusterManager.localNodeTag() ? undefined : '_blank', title: type() },
                                               css: { 'link-disabled': $parent.isBeingDeleted }">
@@ -146,6 +146,14 @@
                                 </div>
                             </div>
                             <!-- /ko -->
+                            <!-- TODO: Show only when nodes count > 5  -->
+                            <div>
+                                <a>
+                                    <i class="icon-dbgroup"></i>
+                                    <span>+<span>3</span> more</span> <!-- TODO: add binding  -->
+                                </a>
+                            </div>
+                            <!-- /TODO -->
                         </div>
                     </div>
                     <div class="vertical-divider properties-container"
@@ -175,7 +183,7 @@
                                         <span data-bind="visible: !inProgressAction() && !disabled()">Disable</span>
                                     </button>
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                            data-bind="disable: isBeingDeleted() || inProgressAction(), visible: online() || $root.isAboveUserAccess()"> 
+                                            data-bind="disable: isBeingDeleted() || inProgressAction(), visible: online() || $root.isAboveUserAccess()">
                                         <span class="caret"></span>
                                         <span class="sr-only">Toggle Dropdown</span>
                                     </button>
@@ -315,5 +323,48 @@
             </div>
         </div>
     </div>
-
 </script>
+<!--TODO: Add modal -->
+<div class="modal-dialog modal-md" id="dbgroupNodes">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" data-bind="click: close" class="close" data-dismiss="modal" aria-label="Close"><i aria-hidden="true" class="icon-cancel"></i></button>
+            <h4 class="modal-title">
+                <i class="icon-dbgroup"></i>
+                <span>
+                    DB Group for Northwind
+                </span>
+            </h4>
+        </div>
+        <div class="modal-body">
+            <div class="flex-horizontal flex-wrap">
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-rehab"></i> <span>Node A</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-watcher"></i> <span>Node B</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-promotable"></i> <span>Node C</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-member"></i> <span>Node D</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-member"></i> <span>Node E</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-member"></i> <span>Node F</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-member"></i> <span>Node G</span>
+                </a>
+                <a href="#" class="margin-left margin-right">
+                    <i class="icon-dbgroup-member"></i> <span>Node H</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--TODO -->
