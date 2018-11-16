@@ -24,11 +24,11 @@ class graphQueryResults {
     private edgesContainer: d3.Selection<void>;
     private nodesContainer: d3.Selection<void>;
 
-    private readonly colorScale: d3.scale.Ordinal<string, string>;
+    private readonly colorClassScale: d3.scale.Ordinal<string, string>;
 
     constructor(private selector: string) {
-        this.colorScale = d3.scale.ordinal<string>()
-            .range(["#f75e71", "#f38861", "#f0ae5e", "#edcd51", "#7bd85d", "#37c4ac", "#2f9ef3", "#6972ee", "#9457b5", "#d45598"]);
+        this.colorClassScale = d3.scale.ordinal<string>()
+            .range(_.range(1, 11).map(x => "color-" + x));
     }
     
     private init() {
@@ -100,13 +100,13 @@ class graphQueryResults {
         }
     }
     
-    private getCollectionColor(data: debugGraphOutputNodeWithLayout) {
+    private getCollectionColorClass(data: debugGraphOutputNodeWithLayout) {
         const metadata = data.Value["@metadata"];
         if (!metadata) {
             return undefined;
         }
         
-        return this.colorScale(metadata["@collection"]);
+        return this.colorClassScale(metadata["@collection"]);
     }
     
     draw(data: debugGraphOutputResponse) {
@@ -131,9 +131,8 @@ class graphQueryResults {
         
         enteringNodes
             .append("circle")
-            .attr("class", "node-bg")
+            .attr("class", d => "node-bg " + this.getCollectionColorClass(d))
             .attr("r", 0)
-            .attr("fill", d => this.getCollectionColor(d))
             .on("mousedown", () => {
                 mouseDownPosition = d3.mouse(this.nodesContainer.node());
             })
