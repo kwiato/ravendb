@@ -239,6 +239,7 @@ class indexPerformance extends viewModelBase {
         openedTrackArrow: undefined as string,
         closedTrackArrow: undefined as string,
         stripeTextColor: undefined as string,
+        progressStripes: undefined as string,
         tracks: {
             "Collection": undefined as string,
             "Indexing": undefined as string,
@@ -863,7 +864,7 @@ class indexPerformance extends viewModelBase {
             context.restore();
         }
 
-        this.inProgressAnimator.animate();
+        this.inProgressAnimator.animate(this.colors.progressStripes);
     }
 
     private drawTracksBackground(context: CanvasRenderingContext2D, xScale: d3.time.Scale<number, number>) {
