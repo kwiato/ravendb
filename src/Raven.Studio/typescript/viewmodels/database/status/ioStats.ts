@@ -298,11 +298,11 @@ class ioStats extends viewModelBase {
     private brushContainer: d3.Selection<any>;
     private zoom: d3.behavior.Zoom<any>;
     private yScale: d3.scale.Ordinal<string, number>;
-    private tooltip: d3.Selection<Raven.Server.Documents.Handlers.IOMetricsRecentStats | timeGapInfo>; 
-
+    private tooltip: d3.Selection<Raven.Server.Documents.Handlers.IOMetricsRecentStats | timeGapInfo>;
     
     /* colors */
 
+    private scrollConfig: scrollColorConfig;
     private colors = {
         axis: undefined as string,
         gaps: undefined as string,
@@ -372,6 +372,7 @@ class ioStats extends viewModelBase {
         
         colorsManager.setup(".io-stats .main-colors", this.colors);
         colorsManager.setup(".io-stats .event-colors", this.eventsColors);
+        this.scrollConfig = graphHelper.readScrollConfig();
 
         ioStats.meterTypes.forEach(meterType => {
             this.legends.get(meterType)(new legend(this.eventsColors[meterType].low, this.eventsColors[meterType].high, meterType));
@@ -1076,7 +1077,8 @@ class ioStats extends viewModelBase {
                 { left: this.totalWidth, top: ioStats.axisHeight },
                 this.currentYOffset,
                 this.totalHeight - ioStats.brushSectionHeight - ioStats.axisHeight,
-                this.maxYOffset ? this.maxYOffset + this.totalHeight - ioStats.brushSectionHeight - ioStats.axisHeight : 0);
+                this.maxYOffset ? this.maxYOffset + this.totalHeight - ioStats.brushSectionHeight - ioStats.axisHeight : 0, 
+                this.scrollConfig);
         }
         finally {
             context.restore();

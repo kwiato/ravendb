@@ -533,3 +533,8 @@ interface getIndexEntriesFieldsCommandResult {
     Static: string[];
     Dynamic: string[];
 }
+
+interface scrollColorConfig {
+    trackColor: string;
+    scrollColor: string;
+}
