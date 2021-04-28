@@ -13,8 +13,7 @@
 
 #dashboard-container {
     
-    .js-animate {
-        position: absolute;
+    .js-animate {        
         overflow: hidden;
     }
 
@@ -394,11 +393,11 @@
     }
 
     .panel-title {
-        i {
-            top: 6px;
-        }
+        display: flex;
+        align-items: center;
+
         span {
-            padding-left: 20px;
+            margin-left: @gutter-sm;
         }
     }
 
@@ -491,11 +490,7 @@
 
         .list-container {
             min-height: 70px;
-        }
-        
-        i {
-            top: 16px;
-        }
+        }        
     }
 
     .dashboard-cpu-memory {
